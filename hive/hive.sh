@@ -66,12 +66,12 @@ case $1 in
     ;;
 "status")
     result=$(check_process HiveMetastore 9083)
-    show_status HiveMetastore $result
+    show_status HiveMetastore "$result"
     result=$(check_process HiveServer2 10000)
-    show_status HiveServer2 $result
+    show_status HiveServer2 "$result"
     ;;
 *)
     echo Invalid Args!
-    echo 'Usage: '$(basename $0)' start|stop|restart|status'
+    echo "Usage: $0 start|stop|restart|status" >&2
     ;;
 esac
