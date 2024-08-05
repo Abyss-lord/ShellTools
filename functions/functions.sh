@@ -52,3 +52,52 @@ check_disk() {
     done
 
 }
+
+# 检查HDFS
+# 依赖：which hdfs
+# 功能：检查HDFS是否正常运行
+# 输出：如果HDFS正常运行，输出"HDFS is ready"；否则输出"HDFS is not ready"
+# 示例：check_hdfs
+check_hdfs() {
+    set -e
+    HDFS_RUN=$(which hdfs 2>/dev/null)
+    if [ -z "$HDFS_RUN" ]; then
+        echo "HDFS is not installed"
+        exit 1
+    fi
+
+    hdfs_ready=$(hdfs dfsadmin -report | grep "Live datanodes" | awk '{print $3}')
+
+    if [[ ${hdfs_ready} == "(1):" ]]; then
+        echo "HDFS is ready"
+    else
+        echo "HDFS is not ready"
+        exit 1
+    fi
+}
+
+# 检查Hive
+# 依赖：which hive
+# 功能：检查Hive是否正常运行
+# 输出：如果Hive正常运行，输出"Hive is ready"；否则输出"Hive is not ready"
+# 示例：check_hive
+check_hive() {
+    set +e
+    Hive_RUN=$(which hive 2>/dev/null)
+    if [ -z "$Hive_RUN" ]; then
+        echo "Hive is not installed"
+        exit 1
+    fi
+
+    hive_ready=$(hive -e "show databases;" 2>&1)
+
+    if [[ ${hive_ready} == *"FAILED"* ]]; then
+        echo "Hive is not ready"
+        exit 1
+    else
+        echo "Hive is ready"
+    fi
+
+}
+
+check_hive
